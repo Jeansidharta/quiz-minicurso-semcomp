@@ -8,6 +8,7 @@ export default function Home() {
 	let [points, setPoints] = React.useState(0);
 	const [questions, setQuestions] = React.useState([{}]);
 	const [questionIndex, setQuestionIndex] = React.useState(0);
+	const [isLoading, setIsLoading] = React.useState(true);
 	React.useEffect(()=>{
 		// Alert.alert(
 		// 	"Bem vindo(a)",
@@ -20,10 +21,12 @@ export default function Home() {
 		pullQuestions();
 	}, []);
 	async function pullQuestions(){
+		setIsLoading(true);
 		const api = await fetch(API_URL);
 		const data = await api.json();
 		setQuestions(data.results);
 		console.log(data.results);
+		setIsLoading(false);
 	}
 	async function resetGame(){
 		await pullQuestions();
@@ -45,31 +48,33 @@ export default function Home() {
 	}
 	return (
 		<View style={styles.container}>
-			<View style={styles.questionView}>
-				<Text style={{
-					fontSize: 32,
-					color: "white",
-					textAlign: "center"
-				}}>
-					{decodeURIComponent(questions[questionIndex].question)}
-				</Text>
-			</View>
-			<View style={{width: "100%", flex: 1}}>
-				<Text style={{
-					textAlign: "center",
-					flex: 1,
-					fontSize: 20,
-					marginTop: 20
-				}}>Correct answers: {points}/{questions.length}</Text>
-			</View>
-			<View style={styles.buttonsView}>
-				<View style={styles.buttonView}>
-					<Button color={Colors.danger} title="False" onPress={()=>click(false)}/>
+			{isLoading? (<Text>LOADING....</Text>) : (<>
+				<View style={styles.questionView}>
+					<Text style={{
+						fontSize: 32,
+						color: "white",
+						textAlign: "center"
+					}}>
+						{decodeURIComponent(questions[questionIndex].question)}
+					</Text>
 				</View>
-				<View style={styles.buttonView}>
-					<Button color={Colors.success} title="True" onPress={()=>click(true)}/>
+				<View style={{width: "100%", flex: 1}}>
+					<Text style={{
+						textAlign: "center",
+						flex: 1,
+						fontSize: 20,
+						marginTop: 20
+					}}>Correct answers: {points}/{questions.length}</Text>
 				</View>
-			</View>
+				<View style={styles.buttonsView}>
+					<View style={styles.buttonView}>
+						<Button color={Colors.danger} title="False" onPress={()=>click(false)}/>
+					</View>
+					<View style={styles.buttonView}>
+						<Button color={Colors.success} title="True" onPress={()=>click(true)}/>
+					</View>
+				</View>
+			</>)}
 		</View>
 	);
 }
