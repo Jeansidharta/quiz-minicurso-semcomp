@@ -24,7 +24,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ucl.quiz"
+    },
+    "android": {
+      "package": "com.ucl.quiz"
     }
   }
 }
