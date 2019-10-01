@@ -40,7 +40,7 @@ export default function Home() {
 	function endGame(){
     Alert
       .alert("Game finished!", `You correctly answered ${points} questions! Congratulations!`, [
-			  {text: "play again?", onPress: resetGame},
+			  {text: "Play Again", onPress: resetGame},
 		  ], { cancelable: false });
   }
   
@@ -105,11 +105,11 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     flex: 1,
+    justifyContent: "center",
     backgroundColor: Colors.primary,
     paddingHorizontal: 20
   },
   questionText: {
-    flex: 1,
     fontSize: 32,
     color: Colors.white,
     textAlign: "center",

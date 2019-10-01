@@ -23,6 +23,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "androidNavigationBar": {
+      "visible": false
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ucl.quiz"
