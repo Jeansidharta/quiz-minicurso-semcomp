@@ -7,8 +7,9 @@ import Colors from "../constants/colors";
 
 const API_URL = "https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=boolean&encode=url3986";
 
+let points = 0;
+
 export default function Home() {
-	const [points, setPoints] = React.useState(0);
 	const [questions, setQuestions] = React.useState([{}]);
 	const [questionIndex, setQuestionIndex] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -23,16 +24,16 @@ export default function Home() {
     axios.get(API_URL)
       .then((res) => {
         setQuestions(res.data.results);
-        // console.log(res.data.results);
         setIsLoading(false);
       }, (err) => {
         setIsLoading(false);
+        getQuestions();
       });
   }
   
 	function resetGame(){
 		getQuestions();
-		setPoints(0);
+		points = 0;
     setQuestionIndex(0);
   }
   
@@ -40,21 +41,20 @@ export default function Home() {
     Alert
       .alert("Game finished!", `You correctly answered ${points} questions! Congratulations!`, [
 			  {text: "play again?", onPress: resetGame},
-		  ]);
+		  ], { cancelable: false });
   }
   
 	function choose(answer){
 		const correctAnswer = questions[questionIndex].correct_answer == "True" ? true : false;
     
     if (answer === correctAnswer) {
-      setPoints(points + 1);
+      points += 1;
     }
     
     if (questionIndex === questions.length - 1) {
 			endGame();
     } else {
       setQuestionIndex(questionIndex + 1);
-      console.log(decodeURIComponent(questions[questionIndex].question));
     }
   }
   
@@ -74,12 +74,6 @@ export default function Home() {
                 { decodeURIComponent(questions[questionIndex].question) }
               </Text>
             </View>
-            <ProgressBarAndroid
-              styleAttr="Horizontal"
-              indeterminate={false}
-              progress={1}
-              color={Colors.secondary}
-            />
 
             <Text style={styles.correctAnwsersText}>Correct answers: { points }/{ questions.length }</Text>
 
