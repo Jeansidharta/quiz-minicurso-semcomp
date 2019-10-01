@@ -24,4 +24,5 @@ black: "#303030"
 ## Assets
 
 Splash: https://ucl-sanca.xyz/quiz-splash
+
 Icon: https://ucl-sanca.xyz/quiz-icon
