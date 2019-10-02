@@ -9,53 +9,10 @@ const API_URL = "https://opentdb.com/api.php?amount=10&category=18&difficulty=me
 
 let points = 0;
 
-const TimerBar = React.forwardRef(function TimerBar({onTimeout = (()=>{})}, ref){
-	const [width] = React.useState(new Animated.Value(Dimensions.get("window").width));
-	const animationRef = React.useRef();
-	React.useEffect(()=>{
-		animationRef.current = Animated.timing(
-			width,
-			{
-				toValue: 0,
-				duration: 5000,
-			}
-		);
-		animationRef.current.start();
-	}, []);
-	React.useEffect(()=>{
-		const id = width.addListener(({value})=>{
-			if(value == 0)
-				onTimeout();
-		});
-		return ()=>{
-			width.removeListener(id);
-		}
-	}, [onTimeout]);
-	function reset(){
-		width.setValue(Dimensions.get("window").width);
-		animationRef.current.start();
-	}
-	function stop(){
-		animationRef.current.stop();
-	}
-	React.useImperativeHandle(ref, ()=>({reset, stop}));
-	return(
-		<>
-			<View style={styles.timerBar}/>
-			<Animated.View ref={ref} style={[styles.timerBar, {
-				transform: [{translateY: -10}],
-				backgroundColor: Colors.success,
-				width: width
-			}]} />
-		</>
-	);
-});
-
 export default function Home() {
 	const [questions, setQuestions] = React.useState([{}]);
 	const [questionIndex, setQuestionIndex] = React.useState(0);
 	const [isLoading, setIsLoading] = React.useState(true);
-	const timerBarRef = React.useRef();
 
 	React.useEffect(()=>{
 		getQuestions();
@@ -68,9 +25,6 @@ export default function Home() {
 		.then((res) => {
 			setQuestions(res.data.results);
 			setIsLoading(false);
-		}, (err) => {
-			setIsLoading(false);
-			getQuestions();
 		});
 	}
 
@@ -81,7 +35,6 @@ export default function Home() {
 	}
 
 	function endGame(){
-		timerBarRef.current.stop();
 		Alert
 			.alert("Game finished!", `You correctly answered ${points} questions! Congratulations!`, [
 				{text: "Play Again", onPress: resetGame},
@@ -90,7 +43,6 @@ export default function Home() {
 
 	function choose(answer){
 		const correctAnswer = questions[questionIndex].correct_answer == "True" ? true : false;
-		timerBarRef.current.reset();
 
 		if (answer === correctAnswer) {
 			points += 1;
@@ -101,10 +53,6 @@ export default function Home() {
 		} else {
 			setQuestionIndex(questionIndex + 1);
 		}
-	}
-
-	function onQuestionTimeout(){
-		choose(null);
 	}
 
 	return (
@@ -122,7 +70,6 @@ export default function Home() {
 						{ decodeURIComponent(questions[questionIndex].question) }
 					</Text>
 				</View>
-				<TimerBar ref={timerBarRef} onTimeout={onQuestionTimeout}/>
 				<Text style={styles.correctAnwsersText}>Correct answers: { points }/{ questions.length }</Text>
 				<View style={styles.buttonsContainer}>
 					<View style={styles.button}>
@@ -141,11 +88,6 @@ const styles = StyleSheet.create({
 	loadingContainer: {
 		flex: 1,
 		justifyContent: 'center'
-	},
-	timerBar: {
-		height: 10,
-		width: "100%",
-		backgroundColor: Colors.danger
 	},
 	container: {
 		flex: 1,
